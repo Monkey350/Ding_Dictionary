@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27703.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DingApp_David", "DingApp_David\DingApp_David.csproj", "{38EC8F66-8FFA-4F18-A008-1F02CBAD9D89}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DingApp_David.Tests", "DingApp_David.Tests\DingApp_David.Tests.csproj", "{15B4E793-577A-4B1A-8E73-5FE44747F4D3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{38EC8F66-8FFA-4F18-A008-1F02CBAD9D89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38EC8F66-8FFA-4F18-A008-1F02CBAD9D89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38EC8F66-8FFA-4F18-A008-1F02CBAD9D89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38EC8F66-8FFA-4F18-A008-1F02CBAD9D89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{15B4E793-577A-4B1A-8E73-5FE44747F4D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{15B4E793-577A-4B1A-8E73-5FE44747F4D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{15B4E793-577A-4B1A-8E73-5FE44747F4D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{15B4E793-577A-4B1A-8E73-5FE44747F4D3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {31EFCD73-1FCB-431D-9319-9A2BDDF28CA6}
+	EndGlobalSection
+EndGlobal
