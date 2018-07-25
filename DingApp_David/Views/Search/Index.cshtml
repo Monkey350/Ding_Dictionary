@@ -1,0 +1,21 @@
+﻿@model DingApp_David.Models.WordModel
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Ding Search</h2>
+<p>Enter the word you'd like to look up.</p>
+<form action="/Search/Search" method="get">
+    <input type="text" placeholder="Enter word here" name="word" />
+    <input type="submit" value="Search"/>
+</form>
+<br/>
+<hr/>
+
+<div>
+    <h3>@Model.word</h3>
+    <h4>@Model.definitions</h4>
+</div>
+
+<hr/>
+
