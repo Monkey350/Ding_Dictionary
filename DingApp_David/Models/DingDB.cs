@@ -5,13 +5,13 @@ using System.Linq;
 namespace DingApp_David.Models
 {
 
-    public class DingDb : DbContext
+    public class DingDb : DbContext, IDingDb
     {
-        // Your context has been configured to use a 'Model1' connection string from your application's 
+        // Your context has been configured to use a 'DingDb' connection string from your application's 
         // configuration file (App.config or Web.config). By default, this connection string targets the 
-        // 'DingApp_David.Models.Model1' database on your LocalDb instance. 
+        // 'DingApp_David.Models.DingDb' database on your LocalDb instance. 
         // 
-        // If you wish to target a different database and/or database provider, modify the 'Model1' 
+        // If you wish to target a different database and/or database provider, modify the 'DingDb' 
         // connection string in the application configuration file.
 
 
@@ -20,6 +20,18 @@ namespace DingApp_David.Models
         public DingDb()
             : base("name=DingDb")
         {
+        }
+
+        IQueryable<T> IDingDb.Query<T>()
+        {
+            return Set<T>();
+        }
+
+        T IDingDb.Add<T>(T entity)
+        {
+            Set<T>().Add(entity);
+            SaveChanges();
+            return entity;
         }
 
         // Add a DbSet for each entity type that you want to include in your model. For more information 

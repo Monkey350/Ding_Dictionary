@@ -19,7 +19,7 @@ namespace DingApp_David.Migrations
             //  This method will be called after migrating to the latest version.
 
             context.Words.AddOrUpdate(r => r.definitions, 
-                new WordModel { word = "kek", definitions = "1) The Korean version of LOL. \r\n2) One of the primary foundational principles of the nation of Kekistan."}
+                new WordModel { word = "word here", definitions = "definition here"}
                 );
         }
     }
