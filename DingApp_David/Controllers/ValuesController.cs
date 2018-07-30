@@ -7,13 +7,30 @@ using System.Xml;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using Newtonsoft.Json;
+using DingApp_David.Models;
+using DingApp_David.Services;
 
 namespace DingApp_David.Controllers
 {
     public class ValuesController : ApiController
     {
-        private const string APIKey = "cab72891-f003-43ef-a983-253666d45082"; //Merriam-Webster Dictionary API key. Better scope definition needed for this variable.
-        
+
+        private IDingDb db;
+        private LookupService lookupService;
+
+        public ValuesController()
+        {
+            db = new DingDb();
+            lookupService = new LookupService(db);
+        }
+
+        public ValuesController(IDingDb _db)
+        {
+            db = _db;
+            lookupService = new LookupService(db);
+        }
+
         // GET api/values
         public IEnumerable<string> Get()
         {
@@ -44,7 +61,21 @@ namespace DingApp_David.Controllers
         // GET api/values?word=word
         public string Get(string word)
         {
-            return !string.IsNullOrEmpty(word) ? word : "";
+            // service
+            string json = "";
+            WordModel result = lookupService.WordLookup(word);
+
+            if (result != null)
+            {
+                json = JsonConvert.SerializeObject(result);
+            }
+            else
+            {
+                string error = $"Merriam Webster API returned no results for \"{word}\". Is your input valid?";
+                json = JsonConvert.SerializeObject(error);
+            }
+
+            return json;
         }
 
     }

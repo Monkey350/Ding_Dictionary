@@ -2,24 +2,28 @@
 using System.Net;
 using System.Web.Mvc;
 using System.Xml;
+using System.Configuration;
 using DingApp_David.Models;
+using DingApp_David.Services;
 
 namespace DingApp_David.Areas.HelpPage.Controllers
 {
     public class SearchController : Controller
     {
 
-        private const string APIKey = "cab72891-f003-43ef-a983-253666d45082"; //Merriam-Webster Dictionary API key. Better scope definition needed for this variable.
         private IDingDb db;
+        private LookupService lookupService;
 
         public SearchController()
         {
             db = new DingDb();
+            lookupService = new LookupService(db);
         }
 
         public SearchController(IDingDb _db)
         {
             db = _db;
+            lookupService = new LookupService(db);
         }
 
         /// <summary>
@@ -31,7 +35,7 @@ namespace DingApp_David.Areas.HelpPage.Controllers
 
             ViewBag.Title = "Ding Search";
 
-            var model = db.Query<WordModel>().FirstOrDefault(x => x.word.Equals("word here"));
+            var model = lookupService.WordLookup("word here");
 
             return View(model);
 
@@ -44,20 +48,14 @@ namespace DingApp_David.Areas.HelpPage.Controllers
         /// <returns></returns>
         public ActionResult Search(string word) //word passed in to search for
         {
-            //try DB
-            var model = db.Query<WordModel>().FirstOrDefault(x => x.word.Equals(word));
+            //LookupService tries DB then Dictionary API
+            var model = lookupService.WordLookup(word);
 
-            if (model == null) //not found in DB
+            if (model == null) //not found in DB nor Dictionary API
             {
-                //call the Merriam Dictionary API for the definition
-                model = CallDictionary(word);
-
-                if (model == null) //not found in Dictionary API
-                {
-                    ViewBag.Title = "Word Not Found";
-                    ViewBag.Message = "Merriam Webster API returned no results for \"" + word + "\". Is your input valid?";
-                    return View("Error");
-                }
+                ViewBag.Title = "Word Not Found";
+                ViewBag.Message = $"Merriam Webster API returned no results for \"{word}\". Is your input valid?";
+                return View("Error");
             }
 
             return View("Index", model);
@@ -74,46 +72,6 @@ namespace DingApp_David.Areas.HelpPage.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
-        }
-
-        /// <summary>
-        /// Calls DictionaryAPI to search for the word
-        /// </summary>
-        /// <param name="word">The word to search for</param>
-        /// <returns></returns>
-        public WordModel CallDictionary(string word) 
-        {
-            string definition = "";
-            string URL = "https://www.dictionaryapi.com/api/v1/references/collegiate/xml/" + word + "?key=" + APIKey;
-            XmlDocument xmlResponse = new XmlDocument();
-
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
-            request.Method = "GET";
-
-            using (HttpWebResponse resp = (HttpWebResponse)request.GetResponse())
-            {
-                xmlResponse.Load(resp.GetResponseStream());
-            }
-
-            //definitions enclosed in <dt> tags in XML reponse from Dictionary API
-            XmlNodeList defs = xmlResponse.GetElementsByTagName("dt");
-
-            if (defs.Count > 0) //found in Dictionary API
-            {
-                for (int i = 0; i < defs.Count; i++)
-                {
-                    int defNum = i + 1; //definition number
-                    definition += defNum + ") " + defs.Item(i).InnerText.Replace(":", " : ") + " ";
-                }
-
-                var model = db.Add(new WordModel() { word = word, definitions = definition });
-                return model;
-            }
-            else
-            {
-                return null;
-            }
-
         }
 
     }

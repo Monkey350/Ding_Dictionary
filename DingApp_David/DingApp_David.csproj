@@ -201,6 +201,7 @@
     <Compile Include="Models\WordModel.cs" />
     <Compile Include="Models\DingDb.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\LookupService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
