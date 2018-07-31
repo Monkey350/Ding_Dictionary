@@ -43,13 +43,13 @@ namespace DingApp_David.Tests.Controllers
             mockService.Setup(x => x.APILookup(It.IsAny<string>())).Returns((string x) => { return new WordModel() { word = "api-test", definitions = "api test definition" }; });
             SearchController controller = new SearchController(mockService.Object);
             WordModel testWord = new WordModel { word = "api-test", definitions = "api test definition" }; //expected result from mocked Dictionary API call 
-            int expectedCount = 6; //5 initial entries + intel = 6 entries
+            //int expectedCount = 6; //5 initial entries + intel = 6 entries
 
 
             // Act
             ViewResult result = controller.Search("api-test") as ViewResult;
             WordModel resultWord = result.Model as WordModel;
-            int testCount = db.Query<WordModel>().Count();
+            //int testCount = db.Query<WordModel>().Count();
 
 
             // Assert

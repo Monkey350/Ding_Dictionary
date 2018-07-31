@@ -8,6 +8,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using DingApp_David.Models;
 using DingApp_David.Services;
 
@@ -29,7 +30,7 @@ namespace DingApp_David.Controllers
         }
 
         // GET api/values?word=word
-        public string Get(string word)
+        public JObject Get(string word)
         {
             // service
             string json = "";
@@ -51,7 +52,8 @@ namespace DingApp_David.Controllers
                 json = JsonConvert.SerializeObject(errObj);
             }
 
-            return json;
+            return JObject.Parse(json);
+            //return json;
         }
 
     }

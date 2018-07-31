@@ -74,7 +74,7 @@ namespace DingApp_David.Services
             }
         }
 
-        public virtual WordModel WordLookup(string word)
+        public WordModel WordLookup(string word)
         {
             WordModel model = DbLookup(word);
 
