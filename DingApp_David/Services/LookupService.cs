@@ -9,11 +9,12 @@ using DingApp_David.Models;
 
 namespace DingApp_David.Services
 {
-    public class LookupService
+    public class LookupService : ILookupService
     {
 
         private IDingDb db;
         private readonly string APIKey = ConfigurationManager.AppSettings["Dictionary_API_Key"]; //from Web.config
+        private readonly string APIUrl = ConfigurationManager.AppSettings["Dictionary_API_URL"];
 
         public LookupService()
         {
@@ -25,47 +26,55 @@ namespace DingApp_David.Services
             db = _db;
         }
 
-        public WordModel DbLookup(string word)
+        public virtual WordModel DbLookup(string word)
         {
             WordModel model = db.Query<WordModel>().FirstOrDefault(x => x.word.Equals(word));
             return model;
         }
 
-        public WordModel APILookup(string word)
+        public virtual WordModel APILookup(string word)
         {
-            string definition = "";
-            string URL = $"https://www.dictionaryapi.com/api/v1/references/collegiate/xml/{word}?key={APIKey}";
-            XmlDocument xmlResponse = new XmlDocument();
-
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
-            request.Method = "GET";
-
-            using (HttpWebResponse resp = (HttpWebResponse)request.GetResponse())
+            try
             {
-                xmlResponse.Load(resp.GetResponseStream());
-            }
+                string definition = "";
+                string URL = $"{APIUrl}{word}?key={APIKey}";
+                XmlDocument xmlResponse = new XmlDocument();
 
-            //definitions enclosed in <dt> tags in XML reponse from Dictionary API
-            XmlNodeList defs = xmlResponse.GetElementsByTagName("dt");
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
+                request.Method = "GET";
 
-            if (defs.Count > 0) //found in Dictionary API
-            {
-                for (int i = 0; i < defs.Count; i++)
+                using (HttpWebResponse resp = (HttpWebResponse)request.GetResponse())
                 {
-                    int defNum = i + 1; //definition number
-                    definition += $"{defNum}) {defs.Item(i).InnerText.Replace(":", " : ")} ";
+                    xmlResponse.Load(resp.GetResponseStream());
                 }
 
-                WordModel model = db.Add(new WordModel() { word = word, definitions = definition });
-                return model;
+                //definitions enclosed in <dt> tags in XML reponse from Dictionary API
+                XmlNodeList defs = xmlResponse.GetElementsByTagName("dt");
+
+                if (defs.Count > 0) //found in Dictionary API
+                {
+                    for (int i = 0; i < defs.Count; i++)
+                    {
+                        int defNum = i + 1; //definition number
+                        definition += $"{defNum}) {defs.Item(i).InnerText.Replace(":", " : ")} ";
+                    }
+
+                    WordModel model = db.Add(new WordModel() { word = word, definitions = definition });
+                    return model;
+                }
+                else
+                {
+                    return null;
+                }
             }
-            else
+            catch
             {
+                //log error
                 return null;
             }
         }
 
-        public WordModel WordLookup(string word)
+        public virtual WordModel WordLookup(string word)
         {
             WordModel model = DbLookup(word);
 

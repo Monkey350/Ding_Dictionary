@@ -11,19 +11,16 @@ namespace DingApp_David.Areas.HelpPage.Controllers
     public class SearchController : Controller
     {
 
-        private IDingDb db;
-        private LookupService lookupService;
+        private ILookupService lookupService;
 
         public SearchController()
         {
-            db = new DingDb();
-            lookupService = new LookupService(db);
+            lookupService = new LookupService();
         }
 
-        public SearchController(IDingDb _db)
+        public SearchController(ILookupService _lookupService)
         {
-            db = _db;
-            lookupService = new LookupService(db);
+            lookupService = _lookupService;
         }
 
         /// <summary>
@@ -49,7 +46,12 @@ namespace DingApp_David.Areas.HelpPage.Controllers
         public ActionResult Search(string word) //word passed in to search for
         {
             //LookupService tries DB then Dictionary API
-            var model = lookupService.WordLookup(word);
+            var model = lookupService.DbLookup(word);
+
+            if (model == null)
+            {
+                model = lookupService.APILookup(word);
+            }
 
             if (model == null) //not found in DB nor Dictionary API
             {
@@ -59,19 +61,6 @@ namespace DingApp_David.Areas.HelpPage.Controllers
             }
 
             return View("Index", model);
-        }
-
-        /// <summary>
-        /// Not sure if this is required but the .NET MVC tutorial I watched recommended I include this.
-        /// </summary>
-        /// <param name="disposing"></param>
-        protected override void Dispose(bool disposing)
-        {
-            if (db != null)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
         }
 
     }

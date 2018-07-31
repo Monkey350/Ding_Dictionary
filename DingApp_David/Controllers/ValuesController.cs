@@ -16,46 +16,16 @@ namespace DingApp_David.Controllers
     public class ValuesController : ApiController
     {
 
-        private IDingDb db;
-        private LookupService lookupService;
+        private ILookupService lookupService;
 
         public ValuesController()
         {
-            db = new DingDb();
-            lookupService = new LookupService(db);
+            lookupService = new LookupService();
         }
 
-        public ValuesController(IDingDb _db)
+        public ValuesController(ILookupService _lookupService)
         {
-            db = _db;
-            lookupService = new LookupService(db);
-        }
-
-        // GET api/values
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
-
-        // GET api/values/5
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/values
-        public void Post([FromBody]string value)
-        {
-        }
-
-        // PUT api/values/5
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        public void Delete(int id)
-        {
+            lookupService = _lookupService;
         }
 
         // GET api/values?word=word
@@ -63,7 +33,12 @@ namespace DingApp_David.Controllers
         {
             // service
             string json = "";
-            WordModel result = lookupService.WordLookup(word);
+            WordModel result = lookupService.DbLookup(word);
+
+            if (result == null)
+            {
+                result = lookupService.APILookup(word);
+            }
 
             if (result != null)
             {
@@ -72,7 +47,8 @@ namespace DingApp_David.Controllers
             else
             {
                 string error = $"Merriam Webster API returned no results for \"{word}\". Is your input valid?";
-                json = JsonConvert.SerializeObject(error);
+                var errObj = new { Error = error };
+                json = JsonConvert.SerializeObject(errObj);
             }
 
             return json;
